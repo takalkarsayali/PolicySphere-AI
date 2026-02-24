@@ -4,7 +4,9 @@
 
 PolicySphere AI is a Retrieval-Augmented Generation (RAG) application that allows users to upload company policy PDFs and ask contextual questions. The system retrieves relevant policy sections using semantic search and generates answers strictly from the provided documents.
 
----
+## Preview
+![img](https://github.com/user-attachments/assets/db745222-8474-4d5e-84a4-8d647e8628d9)
+![img](https://github.com/user-attachments/assets/4c611a8b-4cf6-4be1-8591-f3e688bbd4f3)
 
 ## 🚀 Features
 
