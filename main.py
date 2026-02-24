@@ -107,7 +107,7 @@ with left:
                 UPLOAD_FOLDER = "data/uploads"
                 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-                with st.spinner("Processing PDFs..."):
+                with st.spinner("Loading Policies..."):
 
                     for file in uploaded_files:
                         file_path = os.path.join(UPLOAD_FOLDER, file.name)
@@ -149,8 +149,16 @@ with center:
     st.markdown("<br>", unsafe_allow_html=True)
 
     st.subheader("💬 Ask Policy Questions")
-    query = st.text_input("Type your question here:")
+    query = st.text_input(
+        "Type your question here:",
+        key="user_query",
+        disabled="vectorstore" not in st.session_state
+    )
 
+    # ❌ If policies NOT loaded
+    if "vectorstore" not in st.session_state and uploaded_files:
+        st.info("📂 Please load policies to enable Q&A.")
+    
     if query and "vectorstore" in st.session_state:
 
         llm = ChatGroq(
