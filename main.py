@@ -47,23 +47,29 @@ div[data-testid="column"]:nth-of-type(2) {
 strict_prompt = PromptTemplate(
     input_variables=["context", "question"],
     template="""
-You are a policy assistant AI.
+        You are a professional policy assistant.
 
-Rules:
-1. Answer ONLY from the provided context.
-2. If the answer is not in the context, say:
-   "The policy document does not contain this information."
-3. Be clear and professional.
-4. Mention page number if available.
+        Using ONLY the provided context, generate a structured, professional response.
 
-Context:
-{context}
+        Formatting Rules:
+        1. Start with a clear section heading relevant to the question.
+        2. Provide a concise summary paragraph (if applicable).
+        3. Use bullet points for policy provisions.
+        4. Do NOT copy raw sentences verbatim.
+        5. Keep the tone formal and clear.
+        6. Do not hallucinate information outside context.
 
-Question:
-{question}
+        If answer is not found, say:
+        "The requested information is not available in the loaded policies."
 
-Answer:
-"""
+        Context:
+        {context}
+
+        Question:
+        {question}
+
+        Answer:
+        """
 )
 
 # ---------------------------
@@ -186,20 +192,44 @@ with center:
         st.subheader("Answer")
         st.write(answer)
 
+        # st.subheader("Sources")
+
+        # displayed = set()
+        # for doc in result["source_documents"]:
+        #     source_path = doc.metadata.get("source", "")
+        #     file_name = os.path.basename(source_path)
+        #     page = doc.metadata.get("page_number", 0)
+        #     if isinstance(page, int):
+        #         page += 1
+
+        #     label = f"{file_name} - Page {page}"
+        #     if label not in displayed:
+        #         st.write(f"📄 {label}")
+        #         displayed.add(label)
+
         st.subheader("Sources")
 
-        displayed = set()
+        sources = []
+
         for doc in result["source_documents"]:
             source_path = doc.metadata.get("source", "")
             file_name = os.path.basename(source_path)
             page = doc.metadata.get("page_number", 0)
+
             if isinstance(page, int):
                 page += 1
 
-            label = f"{file_name} - Page {page}"
-            if label not in displayed:
-                st.write(f"📄 {label}")
-                displayed.add(label)
+            sources.append((file_name, page))
+
+        # Remove duplicates
+        unique_sources = list(set(sources))
+
+        # Sort by file name first, then page number ascending
+        sorted_sources = sorted(unique_sources, key=lambda x: (x[0], x[1]))
+
+        # Display
+        for file_name, page in sorted_sources:
+            st.write(f"📄 {file_name} - Page {page}")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
